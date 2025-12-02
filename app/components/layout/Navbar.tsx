@@ -15,7 +15,6 @@ const links = [
   { href: "/competitions", label: "Competitions" },
   { href: "/how-it-works", label: "How it works" },
   { href: "/winners", label: "Winners" },
-  { href: "/spin", label: "Spin wheel" },
 ];
 
 export function Navbar() {
