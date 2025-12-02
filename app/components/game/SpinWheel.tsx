@@ -17,9 +17,11 @@ type SpinSegment = {
 type SpinWheelProps = {
   segments: readonly SpinSegment[];
   onResult?: (segment: SpinSegment) => void;
+  /** When true, hide helper text/result under the wheel (useful in tight modals). */
+  compact?: boolean;
 };
 
-export function SpinWheel({ segments, onResult }: SpinWheelProps) {
+export function SpinWheel({ segments, onResult, compact = false }: SpinWheelProps) {
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [result, setResult] = useState<SpinSegment | null>(null);
@@ -70,13 +72,11 @@ export function SpinWheel({ segments, onResult }: SpinWheelProps) {
     .join(", ");
 
   return (
-    <div className="flex flex-col items-center gap-7">
-      <div className="relative h-80 w-80 sm:h-96 sm:w-96">
-        {/* Outer glowing rim – tuned to King Comps royal/neon palette */}
-        <div className="pointer-events-none absolute inset-0 rounded-full border-[10px] border-[#1D4ED8]/70 bg-[radial-gradient(circle_at_30%_30%,rgba(248,250,252,0.35),transparent_55%),radial-gradient(circle_at_70%_80%,rgba(10,15,30,1),rgba(5,6,21,1))] shadow-[0_0_60px_rgba(56,189,248,0.75)]" />
+    <div className="flex w-full flex-col items-center justify-center gap-4 sm:gap-6">
+      <div className="relative aspect-square w-full max-w-[18rem] sm:max-w-[20rem] lg:max-w-[24rem]">
 
-        {/* Rim lights */}
-        <div className="pointer-events-none absolute inset-1">
+        {/* Rim lights – also only shown on tablet/desktop */}
+        <div className="pointer-events-none absolute inset-1 hidden sm:block">
           {Array.from({ length: 16 }).map((_, i) => {
             const angle = (i / 16) * 360;
             return (
@@ -164,26 +164,28 @@ export function SpinWheel({ segments, onResult }: SpinWheelProps) {
         </motion.div>
       </div>
 
-      <div className="flex flex-col items-center gap-2">
-        <p className="text-xs text-slate-400">
-          Tap the wheel centre to spin. Visual demo only – not the main draw.
-        </p>
-        {result && (
-          <div className="mt-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-center text-sm text-slate-100">
-            <div className="font-heading text-xs uppercase tracking-[0.18em] text-neon-gold">
-              You landed on
-            </div>
-            <div className="mt-1 text-base font-semibold text-white">
-              {result.label}
-            </div>
-            {result.description && (
-              <div className="mt-1 text-xs text-slate-300">
-                {result.description}
+      {!compact && (
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-xs text-slate-400">
+            Tap the wheel centre to spin. Visual demo only – not the main draw.
+          </p>
+          {result && (
+            <div className="mt-2 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-center text-sm text-slate-100">
+              <div className="font-heading text-xs uppercase tracking-[0.18em] text-neon-gold">
+                You landed on
               </div>
-            )}
-          </div>
-        )}
-      </div>
+              <div className="mt-1 text-base font-semibold text-white">
+                {result.label}
+              </div>
+              {result.description && (
+                <div className="mt-1 text-xs text-slate-300">
+                  {result.description}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
