@@ -22,6 +22,7 @@ const stepIcons = [
   // Browse / discover
   (
     <svg
+      key="browse"
       viewBox="0 0 24 24"
       className="h-4 w-4 text-neon-gold"
       aria-hidden="true"
@@ -41,6 +42,7 @@ const stepIcons = [
   // Tickets / cart
   (
     <svg
+      key="tickets"
       viewBox="0 0 24 24"
       className="h-4 w-4 text-neon-gold"
       aria-hidden="true"
@@ -59,6 +61,7 @@ const stepIcons = [
   // Live draw
   (
     <svg
+      key="live"
       viewBox="0 0 24 24"
       className="h-4 w-4 text-neon-gold"
       aria-hidden="true"
