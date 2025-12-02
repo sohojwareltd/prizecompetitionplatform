@@ -10,13 +10,16 @@ type SpinSegment = {
   label: string;
   description?: string;
   color: string;
+  // Optional: mark whether this segment is a "win" so parents can react.
+  isWin?: boolean;
 };
 
 type SpinWheelProps = {
   segments: readonly SpinSegment[];
+  onResult?: (segment: SpinSegment) => void;
 };
 
-export function SpinWheel({ segments }: SpinWheelProps) {
+export function SpinWheel({ segments, onResult }: SpinWheelProps) {
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [result, setResult] = useState<SpinSegment | null>(null);
@@ -49,7 +52,11 @@ export function SpinWheel({ segments }: SpinWheelProps) {
     // After animation, show result
     window.setTimeout(() => {
       setIsSpinning(false);
-      setResult(segments[targetIndex]);
+      const segment = segments[targetIndex];
+      setResult(segment);
+      if (onResult) {
+        onResult(segment);
+      }
     }, 4200);
   };
 
@@ -104,6 +111,44 @@ export function SpinWheel({ segments }: SpinWheelProps) {
           animate={{ rotate: rotation }}
           transition={{ duration: 3.8, ease: [0.16, 1, 0.3, 1] }}
         >
+          {/* Segment labels inside slices */}
+          {segments.map((segment, index) => {
+            const startAngle = index * segmentAngle;
+            const midAngle = startAngle + segmentAngle / 2;
+            const isBottomHalf = midAngle > 90 && midAngle < 270;
+
+            // Convert polar (angle, radius) to percentage x/y so each label is
+            // positioned via absolute coordinates rather than only transforms.
+            const radiusPercent = 38; // distance from centre in % of wheel size
+            const angleRad = ((midAngle - 90) * Math.PI) / 180;
+            const x = 50 + radiusPercent * Math.cos(angleRad);
+            const y = 50 + radiusPercent * Math.sin(angleRad);
+
+            const rotationForText = isBottomHalf ? midAngle + 180 : midAngle;
+
+            return (
+              <div
+                // eslint-disable-next-line react/no-array-index-key
+                key={index}
+                className="pointer-events-none absolute"
+                style={{
+                  left: `${x}%`,
+                  top: `${y}%`,
+                  transform: `translate(-50%, -50%) rotate(${rotationForText}deg)`,
+                }}
+              >
+                <div
+                  className="max-h-28 max-w-[3.25rem] overflow-hidden text-ellipsis break-words text-center text-[11px] font-semibold leading-tight text-slate-100 drop-shadow-[0_0_5px_rgba(0,0,0,0.9)]"
+                  style={{
+                    writingMode: "vertical-rl",
+                  }}
+                >
+                  {segment.label}
+                </div>
+              </div>
+            );
+          })}
+
           {/* Central spin button – neon royal gradient */}
           <button
             type="button"

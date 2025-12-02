@@ -5,6 +5,7 @@ import { FiltersBar } from "./components/filters/FiltersBar";
 import { CompetitionCard } from "./components/competitions/CompetitionCard";
 import { competitions } from "./data/competitions";
 import { useState } from "react";
+import { SpinWheelModal } from "./components/game/SpinWheelModal";
 
 function LiveCompetitionsSection() {
   const [activeFilter, setActiveFilter] = useState("all");
@@ -42,6 +43,8 @@ export default function HomePage() {
     <>
       <HeroSection />
       <LiveCompetitionsSection />
+      {/* Spin wheel popup that appears when the homepage loads */}
+      <SpinWheelModal />
     </>
   );
 }
