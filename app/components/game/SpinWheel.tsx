@@ -13,7 +13,7 @@ type SpinSegment = {
 };
 
 type SpinWheelProps = {
-  segments: SpinSegment[];
+  segments: readonly SpinSegment[];
 };
 
 export function SpinWheel({ segments }: SpinWheelProps) {
